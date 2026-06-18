@@ -1,0 +1,29 @@
+[{
+    "question": "Why does RAG reduce hallucinations?",
+    "relevant_chunk_indices": [18]
+},
+
+{
+    "question": "Why doesn't RAG require retraining?",
+    "relevant_chunk_indices": [19]
+},
+
+{
+    "question": "How are user queries matched with stored knowledge?",
+    "relevant_chunk_indices": [15]
+},
+
+{
+    "question": "What role does the vector database play?",
+    "relevant_chunk_indices": [7]
+},
+
+{
+    "question": "What happens during prompt augmentation?",
+    "relevant_chunk_indices": [10]
+},
+
+{
+    "question": "What are the drawbacks of RAG?",
+    "relevant_chunk_indices": [19]
+}]

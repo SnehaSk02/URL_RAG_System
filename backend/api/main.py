@@ -1,0 +1,103 @@
+from fastapi import FastAPI, HTTPException
+from typing import Optional
+
+from pydantic import BaseModel
+
+from backend.rag.rag_pipeline import (
+    RAGPipeline
+)
+from backend.vectorstore.qdrant_manager import QdrantManager
+from backend.ingestion.ingestion_pipeline import (
+    IngestionPipeline
+)
+
+app = FastAPI()
+
+rag = RAGPipeline()
+
+ingestion = IngestionPipeline()
+
+qdrant_manager= QdrantManager()
+
+class URLRequest(
+    BaseModel
+):
+    url: str
+
+class QueryRequest(
+    BaseModel
+):
+    query: str
+    url_hash: Optional[str] = None
+
+class DeleteUrlModel(BaseModel):
+    source_url: str
+
+# @app.get("/")
+# def health():
+
+#     return {
+#         "status": "running"
+#     }
+
+@app.post("/ingest")
+def ingest_url(
+    request: URLRequest
+):
+
+    result = (
+        ingestion.ingest_url(
+            request.url
+        )
+    )
+
+    return result
+
+@app.post("/ask")
+def ask_question(
+    request: QueryRequest
+):
+
+    return rag.ask(
+        request.query,
+        url_hash=request.url_hash
+
+    )
+
+@app.get("/urls")
+def get_list_urls():
+    """
+    Endpoint to list all ingested URLs and their stats.
+    Maps to: qdrant_manager.list_urls()
+    """
+    try:
+        return qdrant_manager.list_urls()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/url")
+def delete_url_endpoint(data: DeleteUrlModel):
+    """
+    Endpoint to delete a specific URL.
+    Maps to: qdrant_manager.delete_url(source_url=...)
+    """
+    try:
+        qdrant_manager.delete_url(source_url=data.source_url)
+        return {"status": "success", "message": f"Deleted {data.source_url}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/stats")
+def get_collection_stats():
+    """
+    Endpoint to get collection info.
+    Maps to: qdrant_manager.collection_info()
+    """
+    try:
+        info = qdrant_manager.collection_info()
+        return {
+            "points_count": info.points_count,
+            "status": info.status
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
