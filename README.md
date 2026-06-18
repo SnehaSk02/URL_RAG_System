@@ -82,24 +82,31 @@ This metadata enables filtering, citation generation, and future document manage
 ### 5. Retrieval Pipeline (Hybrid Strategy)
 To maximize retrieval accuracy, the system employs a Hybrid Search Strategy that combines dense vector embeddings (semantic search) with BM25 (lexical/keyword search). This ensures the system captures both the intent of the user's question and the specific terminology used in the documents.
 The retrieval pipeline consists of the following stages:
+
 Step 1: Dual Query Processing
 The user's question is processed in parallel for both retrieval methods:
 Dense: The query is converted into an embedding vector using the Sentence Transformer model.
 Sparse: The raw query text is tokenized for BM25 keyword matching.
+
 Step 2: Parallel Retrieval
 The system performs two simultaneous searches:
 Dense Retrieval: Qdrant performs a similarity search to find the top-K chunks that are semantically similar to the query embedding.
 Keyword Retrieval: The BM25 index is queried to find the top-K chunks containing exact keywords or rare terms from the query.
+
 Step 3: Result Fusion
 The results from both the Dense and BM25 retrievers are merged into a single candidate list. Deduplication logic is applied to ensure that if the same chunk appears in both search results, it is not double-counted.
+
 Step 4: Reranking
 The merged list of candidate chunks is reranked using a Cross-Encoder model.
 This step re-evaluates the relevance of the combined list, prioritizing chunks that directly answer the specific user question.
 This fusion method ensures that contextually relevant (Dense) and factually specific (BM25) chunks are both considered for the final answer.
+
 Step 5: Context Construction
 The highest-ranked chunks from the reranking stage are combined to form the final retrieval context.
+
 Step 6: Answer Generation
 The retrieval context and user query are passed to the LLM for grounded answer generation.
+
 ### 6. Prompt Design
 Prompt engineering was used to ensure grounded and accurate responses.
 Prompt Structure
@@ -172,26 +179,33 @@ It is recommended to create a virtual environment to isolate dependencies:
 
 ->python -m venv venv
 # Windows
-venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
-pip install -r requirements.txt
-Step 2: Backend Installation and Execution
+venv\Scripts\activate  
+
+pip install -r requirements.txt  
+
+Step 2: Backend Installation and Execution  
+
 Navigate to the backend directory:
 ->cd backend
 
-Start the API Server:
+Start the API Server:  
+
 Launch the FastAPI server using Uvicorn. The --reload flag enables auto-reloading during development:
-bash
-->uvicorn api.main:app --reload
-The backend will be available at http://127.0.0.1:8000.
+bash  
+
+->uvicorn api.main:app --reload  
+
+The backend will be available at http://127.0.0.1:8000.  
+
 Step 3: Frontend Installation and Execution
 Note: Open a new terminal window to run the frontend while keeping the backend server running.
-Navigate to the frontend directory:
+Navigate to the frontend directory:  
 
-->cd frontend
+->cd frontend  
+
 Launch the Streamlit Application:
-->streamlit run app.py
+->streamlit run app.py  
+
 The browser will automatically open the interface at http://localhost:8501.
 Accessing the System
 Once both services are running, users can interact with the system via the Streamlit frontend at http://localhost:8501. The frontend will communicate with the backend API to ingest URLs and answer queries.
@@ -201,7 +215,7 @@ The URL-based RAG system was deployed using a cloud-native architecture that sep
 Backend Deployment-The backend was developed using FastAPI and deployed on Hugging Face Spaces (Docker/SDK environment).
 Frontend Deployment-The user interface was built using Streamlit.
 
-Conclusion
+## Conclusion
 The developed URL-based RAG system successfully demonstrates the complete Retrieval-Augmented Generation workflow, including web content ingestion, semantic chunking, embedding generation, vector storage, retrieval, reranking, and answer generation. The system provides a strong foundation for building production-grade knowledge assistants while remaining modular and extensible for future enhancements.
 
 
