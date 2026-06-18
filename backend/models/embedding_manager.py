@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 _model_instance = None
 class EmbeddingManager:
     MODEL_NAME = (
-        "BAAI/bge-m3"  # your model name
+        "BAAI/bge-m3"  
     )
 
     @classmethod
