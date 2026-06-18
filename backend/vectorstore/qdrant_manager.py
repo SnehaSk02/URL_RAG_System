@@ -136,37 +136,7 @@ class QdrantManager:
 
         return results.points
 
-    # --------------------------------------------------
-    # Search Within Specific URL
-    # --------------------------------------------------
 
-    # def search_by_url(
-    #     self,
-    #     query_embedding,
-    #     source_url,
-    #     top_k=5
-    # ):
-
-    #     results = self.client.search(
-    #         collection_name=self.collection_name,
-
-    #         query_vector=query_embedding.tolist(),
-
-    #         query_filter=Filter(
-    #             must=[
-    #                 FieldCondition(
-    #                     key="source_url",
-    #                     match=MatchValue(
-    #                         value=source_url
-    #                     )
-    #                 )
-    #             ]
-    #         ),
-
-    #         limit=top_k
-    #     )
-
-    #     return results
 
     # --------------------------------------------------
     # Check URL Exists

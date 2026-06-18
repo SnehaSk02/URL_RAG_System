@@ -1,3 +1,11 @@
+import sys
+import os
+
+# Get the absolute path to the project root directory (RAG_Proj)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+
+# Add it to Python's system path
+sys.path.append(project_root)
 from fastapi import FastAPI, HTTPException
 from typing import Optional
 
