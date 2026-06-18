@@ -8,7 +8,7 @@ from backend.generation.prompt_builder import PromptBuilder
 from backend.generation.llm_service import LLMService
 class RAGPipeline:
 
-    def __init__(self):
+    def __init__(self,qdrant_client=None):
 
         self.retriever = Retriever()
 

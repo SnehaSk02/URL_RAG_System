@@ -6,6 +6,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
 # Add it to Python's system path
 sys.path.append(project_root)
+
 from fastapi import FastAPI, HTTPException
 from typing import Optional
 
@@ -21,11 +22,13 @@ from backend.ingestion.ingestion_pipeline import (
 
 app = FastAPI()
 
-rag = RAGPipeline()
-
-ingestion = IngestionPipeline()
-
 qdrant_manager= QdrantManager()
+
+rag = RAGPipeline(qdrant_client=qdrant_manager)
+
+ingestion = IngestionPipeline(qdrant_client=qdrant_manager)
+
+
 
 class URLRequest(
     BaseModel
@@ -41,12 +44,6 @@ class QueryRequest(
 class DeleteUrlModel(BaseModel):
     source_url: str
 
-# @app.get("/")
-# def health():
-
-#     return {
-#         "status": "running"
-#     }
 
 @app.post("/ingest")
 def ingest_url(

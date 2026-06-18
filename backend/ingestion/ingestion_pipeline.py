@@ -14,7 +14,7 @@ from backend.vectorstore.qdrant_manager import QdrantManager
 
 class IngestionPipeline:
 
-    def __init__(self):
+    def __init__(self,qdrant_client=None):
 
         self.validator = URLValidator()
 
@@ -26,7 +26,7 @@ class IngestionPipeline:
 
         self.embedder = Embedder()
 
-        self.qdrant = QdrantManager()
+        self.qdrant = qdrant_client if qdrant_client else QdrantManager()
 
     def generate_url_hash(
         self,
@@ -78,15 +78,6 @@ class IngestionPipeline:
                     "Unsupported content type"
             }
         
-        #duplicate check
-        # if self.qdrant.url_exists(
-        #     normalized_url
-        # ):
-        #     return {
-        #         "status": "skipped",
-        #         "message":
-        #             "URL already ingested"
-        #     }
         url_hash = self.generate_url_hash(normalized_url)
 
         if self.qdrant.url_hash_exists(
@@ -103,10 +94,6 @@ class IngestionPipeline:
             )
         )
 
-        #generate url hash
-        # url_hash = (
-        #     self.generate_url_hash(url)
-        # )
 
         cleaned_text = document_text
 
