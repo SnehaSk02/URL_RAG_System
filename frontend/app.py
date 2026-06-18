@@ -9,7 +9,6 @@ API_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:8000")
 
 # Initialize Session State for Chat History
 if 'chats' not in st.session_state:
-    # Structure: { chat_id: { "url": "...", "messages": [], "title": "..." } }
     st.session_state.chats = {}
 
 if 'current_chat_id' not in st.session_state:
@@ -62,7 +61,6 @@ else:
                 # Truncate URL for display
                 display_title = (chat_data['title'][:30] + '...') if len(chat_data['title']) > 30 else chat_data['title']
                 
-                # Button to load this chat
                 if st.button(display_title, key=f"load_{chat_id}", use_container_width=True):
                     st.session_state.current_chat_id = chat_id
                     st.rerun()
@@ -76,14 +74,6 @@ else:
                         st.session_state.current_chat_id = None
                     st.rerun()
 
-# Optional: Show Database Stats (from previous logic)
-try:
-    stats_resp = requests.get(f"{API_URL}/stats")
-    if stats_resp.status_code == 200:
-        stats = stats_resp.json()
-        st.sidebar.metric("Total Chunks", stats.get("points_count", 0))
-except:
-    pass
 
 # --------------------------------------------------
 # Page 1: Ingest URL
@@ -110,7 +100,6 @@ if page == "Ingest URL":
                         # 3. Switch to Ask Question page automatically
                         st.session_state.current_chat_id = new_chat_id
                         st.switch_page("app.py") # Forces page reload to switch view
-                        # Alternatively, simply set a state and rerun, but switch_page is cleaner for selectbox updates
                         
                     else:
                         st.error(f"Error: {response.text}")
@@ -134,7 +123,7 @@ elif page == "Ask Question":
         # Header with "New Chat" button
         col1, col2, col3 = st.columns([6, 1, 1])
         with col1:
-            st.subheader(f"Chatting about: {current_url}")
+            st.subheader(f"Ask a Question:")
         with col2:
             if st.button("🔄 New"):
                 # Just resets the view, does not delete history
@@ -165,8 +154,6 @@ elif page == "Ask Question":
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
                     try:
-                        # Backend call (Passing URL/Hash is optional here, 
-                        # but good if you want to restrict search to this specific URL)
                         response = requests.post(
                             f"{API_URL}/ask",
                             json={

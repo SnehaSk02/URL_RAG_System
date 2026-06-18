@@ -67,7 +67,9 @@ class Retriever:
                 "score": 0.0,
 
                 "text":
-                    result.payload.get("parent_text", result.payload["text"]),
+                    result.payload["text"],
+                
+                "parent_text":result.payload.get("parent_text"),
 
                 "source_url":
                     result.payload[
@@ -103,7 +105,8 @@ class Retriever:
 
         for rank, chunk in enumerate(dense_chunks):
 
-            key = chunk["text"]
+            key = (chunk["url_hash"],
+                   chunk["chunk_index"])
 
             if key not in rrf_scores:
                 rrf_scores[key] = {
@@ -117,7 +120,8 @@ class Retriever:
 
         for rank, chunk in enumerate(bm25_chunks):
 
-            key = chunk["text"]
+            key = (chunk["url_hash"],
+                   chunk["chunk_index"])
 
             if key not in rrf_scores:
                 rrf_scores[key] = {
@@ -149,8 +153,8 @@ class Retriever:
     def retrieve(
         self,
         query,
-        top_k=5,
-        initial_k=50,
+        top_k=8,
+        initial_k=100,
         url_hash=None
     ):
 
@@ -173,8 +177,12 @@ class Retriever:
                 "score":
                     float(result.score),
 
-                "text":
-                    result.payload["text"],
+                "text": result.payload["text"],
+
+                "parent_text":
+                    result.payload.get(
+                        "parent_text"
+                    ),
 
                 "source_url":
                     result.payload[
@@ -222,5 +230,13 @@ class Retriever:
                 top_k=top_k
             )
         )
+
+        for chunk in reranked:
+
+            if chunk.get("parent_text"):
+
+                chunk["text"] = (
+                    chunk["parent_text"]
+                )
 
         return reranked

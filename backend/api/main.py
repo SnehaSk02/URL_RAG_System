@@ -6,7 +6,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
 # Add it to Python's system path
 sys.path.append(project_root)
-
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from typing import Optional
 
@@ -44,6 +44,15 @@ class QueryRequest(
 class DeleteUrlModel(BaseModel):
     source_url: str
 
+@app.get("/")
+def home():
+    return {"status": "Backend is running!"}
+
+@app.post("/predict")
+def predict(data: dict):
+    # Your AI model logic goes here
+    user_text = data.get("text", "")
+    return {"prediction": f"Backend received: {user_text}"}
 
 @app.post("/ingest")
 def ingest_url(
@@ -106,3 +115,6 @@ def get_collection_stats():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+if __name__ == "__main__":
+    # Hugging Face strictly requires port 7860 and host 0.0.0.0
+    uvicorn.run(app, host="0.0.0.0", port=7860)
