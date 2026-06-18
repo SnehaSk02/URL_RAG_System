@@ -178,7 +178,7 @@ Step 1: Environment Setup
 It is recommended to create a virtual environment to isolate dependencies:
 
 ->python -m venv venv
-# Windows
+### Windows
 venv\Scripts\activate  
 
 pip install -r requirements.txt  
