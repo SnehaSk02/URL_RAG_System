@@ -3,3 +3,4 @@ __pycache__/
 .env
 backend/tests
 utils/chunk_filter
+logs/query_logs.jsonl
