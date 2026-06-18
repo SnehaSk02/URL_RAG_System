@@ -1,11 +1,11 @@
 import streamlit as st
 import requests
 import uuid
-
+import os
 # --------------------------------------------------
 # Configuration
 # --------------------------------------------------
-API_URL = "http://127.0.0.1:8000"
+API_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:8000")
 
 # Initialize Session State for Chat History
 if 'chats' not in st.session_state:
